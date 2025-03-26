@@ -167,10 +167,10 @@ class StokesEquations:
             self.build_momentum_eq()
 
         subs_dimensionless = {
-            (2 * self.nu1 / self.nu3 + self.nu2 / self.nu3 - 1 - self.nu4 / self.nu3 + self.nu5 / self.nu3): self.zeta1,
-            (self.nu2 / self.nu3 - 1 + self.nu4 / self.nu3 - self.nu5 / self.nu3): self.zeta2,
-            (self.m_parallel ** 2 / self.nu3): self.alpha_par_sq,
-            (self.m_perp ** 2 / self.nu3): self.alpha_perp_sq
+            2 * self.nu1 / self.nu3 + self.nu2 / self.nu3 - 1 - self.nu4 / self.nu3 + self.nu5 / self.nu3: self.zeta1,
+            self.nu2 / self.nu3 - 1 + self.nu4 / self.nu3 - self.nu5 / self.nu3: self.zeta2,
+            self.m_parallel ** 2 / self.nu3: self.alpha_par_sq,
+            self.m_perp ** 2 / self.nu3: self.alpha_perp_sq
         }
 
         # Expand and isolate x eqn components:
@@ -235,9 +235,9 @@ class StokesEquations:
             modified_expr_x_collect,
             modified_expr_y_collect
         ])
-        self.built_eq_final = sp.Eq(built_eq_lhs, self.f_ext)
+        self.momentum_eq_dimless = sp.Eq(built_eq_lhs, self.f_ext)
 
-        return self.built_eq_final
+        return self.momentum_eq_dimless
 
     def reverse_substitutions(self):
         """
@@ -261,12 +261,12 @@ class StokesEquations:
         """
         if not hasattr(self, 'momentum_eq'):
             self.build_momentum_eq()
-        nu = sp.Symbol('nu')
+        self.nu = sp.Symbol('nu')
         subs_brinkman = {
-            self.nu1: nu,
-            self.nu2: nu,
-            self.nu3: nu,
-            self.nu4: nu,
+            self.nu1: self.nu,
+            self.nu2: self.nu,
+            self.nu3: self.nu,
+            self.nu4: self.nu,
             self.nu5: 0
         }
         self.momentum_eq_brinkman = sp.simplify(self.momentum_eq.subs(subs_brinkman))
